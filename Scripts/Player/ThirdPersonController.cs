@@ -135,7 +135,7 @@ public class ThirdPersonController : MonoBehaviour
 
     private void Update()
     {
-        if (inventoryController != null && inventoryController.IsInventoryOpen)
+        if (inventoryController != null && inventoryController.invOpen)
         {
             // Пропуск обработки движения и атак при открытом инвентаре
             return;

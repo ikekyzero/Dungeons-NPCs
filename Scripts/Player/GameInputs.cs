@@ -27,7 +27,7 @@ public class GameInputs : MonoBehaviour
 
     public void OnMove(InputValue value)
     {
-        if (inventoryController != null && !inventoryController.IsInventoryOpen)
+        if (inventoryController != null && !inventoryController.invOpen)
         {
             MoveInput(value.Get<Vector2>());
         }
@@ -35,7 +35,7 @@ public class GameInputs : MonoBehaviour
 
     public void OnLook(InputValue value)
     {
-        if (cursorInputForLook && inventoryController != null && !inventoryController.IsInventoryOpen)
+        if (cursorInputForLook && inventoryController != null && !inventoryController.invOpen)
         {
             LookInput(value.Get<Vector2>());
         }
@@ -43,7 +43,7 @@ public class GameInputs : MonoBehaviour
 
     public void OnJump(InputValue value)
     {
-        if (inventoryController != null && !inventoryController.IsInventoryOpen)
+        if (inventoryController != null && !inventoryController.invOpen)
         {
             JumpInput(value.isPressed);
         }
@@ -51,7 +51,7 @@ public class GameInputs : MonoBehaviour
 
     public void OnSprint(InputValue value)
     {
-        if (inventoryController != null && !inventoryController.IsInventoryOpen)
+        if (inventoryController != null && !inventoryController.invOpen)
         {
             SprintInput(value.isPressed);
         }
@@ -59,7 +59,7 @@ public class GameInputs : MonoBehaviour
 
     public void OnAttack(InputValue value)
     {
-        if (inventoryController != null && !inventoryController.IsInventoryOpen)
+        if (inventoryController != null && !inventoryController.invOpen)
         {
             AttackInput(value.isPressed);
         }
@@ -67,7 +67,10 @@ public class GameInputs : MonoBehaviour
 
     public void OnInventory(InputValue value)
     {
-        InventoryInput(value.isPressed);
+        if (inventoryController != null && value.isPressed)
+        {
+            inventoryController.ToggleInventory();
+        }
     }
 
     public void MoveInput(Vector2 newMoveDirection)
@@ -93,11 +96,6 @@ public class GameInputs : MonoBehaviour
     public void AttackInput(bool newAttackState)
     {
         attack = newAttackState;
-    }
-
-    public void InventoryInput(bool newInvOpenState)
-    {
-        invOpen = newInvOpenState;
     }
 
     private void OnApplicationFocus(bool hasFocus)
