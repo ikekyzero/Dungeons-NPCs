@@ -10,6 +10,7 @@ public class GameInputs : MonoBehaviour
     public bool sprint;
     public bool attack;
     public bool invOpen;
+    public bool pickup;
 
     [Header("Movement Settings")]
     public bool analogMovement;
@@ -18,16 +19,16 @@ public class GameInputs : MonoBehaviour
     public bool cursorLocked = true;
     public bool cursorInputForLook = true;
 
-    private InventoryController inventoryController;
+    private InventorySystem inventorySystem;
 
     void Start()
     {
-        inventoryController = GetComponent<InventoryController>();
+        inventorySystem = GetComponent<InventorySystem>();
     }
 
     public void OnMove(InputValue value)
     {
-        if (inventoryController != null && !inventoryController.invOpen)
+        if (inventorySystem != null && !inventorySystem.invOpen)
         {
             MoveInput(value.Get<Vector2>());
         }
@@ -35,7 +36,7 @@ public class GameInputs : MonoBehaviour
 
     public void OnLook(InputValue value)
     {
-        if (cursorInputForLook && inventoryController != null && !inventoryController.invOpen)
+        if (cursorInputForLook && inventorySystem != null && !inventorySystem.invOpen)
         {
             LookInput(value.Get<Vector2>());
         }
@@ -43,7 +44,7 @@ public class GameInputs : MonoBehaviour
 
     public void OnJump(InputValue value)
     {
-        if (inventoryController != null && !inventoryController.invOpen)
+        if (inventorySystem != null && !inventorySystem.invOpen)
         {
             JumpInput(value.isPressed);
         }
@@ -51,7 +52,7 @@ public class GameInputs : MonoBehaviour
 
     public void OnSprint(InputValue value)
     {
-        if (inventoryController != null && !inventoryController.invOpen)
+        if (inventorySystem != null && !inventorySystem.invOpen)
         {
             SprintInput(value.isPressed);
         }
@@ -59,7 +60,7 @@ public class GameInputs : MonoBehaviour
 
     public void OnAttack(InputValue value)
     {
-        if (inventoryController != null && !inventoryController.invOpen)
+        if (inventorySystem != null && !inventorySystem.invOpen)
         {
             AttackInput(value.isPressed);
         }
@@ -67,9 +68,16 @@ public class GameInputs : MonoBehaviour
 
     public void OnInventory(InputValue value)
     {
-        if (inventoryController != null && value.isPressed)
+        if (inventorySystem != null && value.isPressed)
         {
-            inventoryController.ToggleInventory();
+            inventorySystem.ToggleInventory();
+        }
+    }
+    public void OnPickup(InputValue value) // Новый метод для подбора
+    {
+        if (inventorySystem != null && !inventorySystem.invOpen)
+        {
+            PickupInput(value.isPressed);
         }
     }
 
@@ -96,6 +104,10 @@ public class GameInputs : MonoBehaviour
     public void AttackInput(bool newAttackState)
     {
         attack = newAttackState;
+    }
+    public void PickupInput(bool newPickupState)
+    {
+        pickup = newPickupState;
     }
 
     private void OnApplicationFocus(bool hasFocus)

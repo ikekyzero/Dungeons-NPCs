@@ -101,7 +101,6 @@ public class ThirdPersonController : MonoBehaviour
     private CharacterController controller;
     private GameInputs gameInputs;
     private GameObject mainCamera;
-    private InventoryController inventoryController;
 
     private const float threshold = 0.01f;
     private bool hasAnimator;
@@ -123,7 +122,6 @@ public class ThirdPersonController : MonoBehaviour
         controller = GetComponent<CharacterController>();
         gameInputs = GetComponent<GameInputs>();
         playerInput = GetComponent<PlayerInput>();
-        inventoryController = GetComponent<InventoryController>();
 
         AssignAnimationIDs();
         currentHealth = maxHealth;
@@ -135,12 +133,6 @@ public class ThirdPersonController : MonoBehaviour
 
     private void Update()
     {
-        if (inventoryController != null && inventoryController.invOpen)
-        {
-            // Пропуск обработки движения и атак при открытом инвентаре
-            return;
-        }
-
         hasAnimator = TryGetComponent(out animator);
 
         HandleJumpAndGravity();
