@@ -13,11 +13,12 @@ MonoBehaviour:
   m_Name: "\u0417\u0435\u043B\u044C\u0435 \u0437\u0434\u043E\u0440\u043E\u0432\u044C\u044F"
   m_EditorClassIdentifier: 
   isStackable: 1
-  maxStackSize: 3
+  maxStackSize: 5
   itemName: "\u0417\u0435\u043B\u044C\u0435 \u0437\u0434\u043E\u0440\u043E\u0432\u044C\u044F"
   description: "\u0412\u043E\u0441\u0441\u0442\u0430\u043D\u0430\u0432\u043B\u0438\u0432\u0430\u0435\u0442
     \u0437\u0434\u043E\u0440\u043E\u0432\u044C\u0435"
   image: {fileID: 21300000, guid: 0efab048ae1864b49ae0cb01e208a44c, type: 3}
+  prefab: {fileID: 6714486133587026075, guid: 07df2e15de3cea74a9cb99fce50620c2, type: 3}
   actions:
   - name: "\u041B\u0435\u0447\u0435\u043D\u0438\u0435"
     sfx: {fileID: 8300000, guid: bde9dda5e10a4264f825d22a735bcebf, type: 3}
@@ -26,4 +27,4 @@ MonoBehaviour:
     - effectType: Health
       value: 5
   isConsumable: 1
-  isDroppable: 1
+  isDroppable: 0

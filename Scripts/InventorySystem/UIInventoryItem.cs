@@ -47,15 +47,11 @@ public class UIInventoryItem : MonoBehaviour, IPointerClickHandler,
         {
             itemImage.gameObject.SetActive(true);
             itemImage.sprite = sprite;
-        } else {
-            Debug.LogWarning("itemImage is null in UIInventoryItem.SetData");
         }
 
         if(quantityTxt != null)
         {
             quantityTxt.text = quantity + "";
-        } else {
-            Debug.LogWarning("quantityTxt is null in UIInventoryItem.SetData");
         }
         empty = false;
     }

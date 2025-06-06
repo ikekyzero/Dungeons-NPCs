@@ -10,6 +10,7 @@ public class ItemData : ScriptableObject
     [SerializeField] private string itemName;
     [SerializeField, TextArea] private string description;
     [SerializeField] private Sprite image;
+    [SerializeField] private GameObject prefab;
     [SerializeField] private List<ItemAction> actions;
     [SerializeField] private Dictionary<string, object> defaultParameters;
     [SerializeField] private bool isConsumable;
@@ -21,6 +22,7 @@ public class ItemData : ScriptableObject
     public string Name => itemName;
     public string Description => description;
     public Sprite Image => image;
+    public GameObject Prefab => prefab;
     public List<ItemAction> Actions => actions;
     public Dictionary<string, object> DefaultParameters => defaultParameters;
     public bool IsConsumable => isConsumable;
@@ -69,10 +71,10 @@ public class ItemEffect
     {
         if (effectType == "Health")
         {
-            var health = target.GetComponent<Player>().health;
-            if (health != null)
+            var player = target.GetComponent<Player>();
+            if (player != null)
             {
-                health.AddHealth((int)value);
+                player.Heal((int)value);
                 return true;
             }
         }
@@ -85,7 +87,6 @@ public class ItemEffect
                 return true;
             }
         }
-        // Add more effect types as needed
         return false;
     }
 }

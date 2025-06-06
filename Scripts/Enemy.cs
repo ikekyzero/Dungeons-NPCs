@@ -9,7 +9,7 @@ public class Enemy : MonoBehaviour
         if(other.CompareTag("Player"))
         {
             Debug.Log("Player получил " + damage + " урона!");
-            other.GetComponent<ThirdPersonController>()?.TakeDamage(damage);
+            other.GetComponent<PlayerController>()?.TakeDamage(damage);
         }
     }
 

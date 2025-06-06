@@ -1,129 +1,114 @@
 using UnityEngine;
-using TMPro;
+using UnityEngine.UI; // Required for Slider component
 
 public class PlayerStats : MonoBehaviour
 {
-    // Основные характеристики
-    public int maxHealth = 100; // Максимальное здоровье
-    public int currentHealth; // Текущее здоровье
+    [Header("Характеристики")]
+    public int Strength = 10;
+    public int Agility = 10;
+    public int Intelligence = 10;
+    public int Armor = 0;
+    public int MaxSleepiness = 100;
+    private int currentSleepiness;
 
-    public int maxMana = 50; // Максимальная мана
-    public int currentMana; // Текущая мана
+    [Header("Нужные объекты")]
+    public Slider healthSlider; // Slider for health
+    public Slider manaSlider; // Slider for mana
+    public Slider staminaSlider; // Slider for stamina
+    
+    [Header("Настройки анимации")]
+    [SerializeField] private float staminaSliderSpeed = 5f; // Скорость изменения слайдера стамины
 
-    public int strength = 10; // Сила
-    public int agility = 10; // Ловкость
-    public int intelligence = 10; // Интеллект
+    private Player player;
+    private float targetStaminaValue;
 
-    public int level = 1; // Уровень персонажа
-    public int experience = 0; // Опыт персонажа
-
-    // Добавляем ссылки на UI элементы для отображения статистики и уведомлений
-    public TextMeshProUGUI statsText;
-    public TextMeshProUGUI notificationText;
-
-    void Start()
+    private void Start()
     {
-        // Инициализация текущих значений здоровья и маны
-        currentHealth = maxHealth;
-        currentMana = maxMana;
-        UpdateStatsUI();
-        if (notificationText != null)
+        player = GetComponent<Player>();
+        currentSleepiness = 0;
+
+        // Подписка на события игрока
+        player.OnHealthChanged += UpdateStatsUI;
+        player.OnManaChanged += UpdateStatsUI;
+        player.OnStaminaChanged += UpdateStatsUI;
+        player.OnLevelUp += UpdateStatsUI;
+
+        // Initialize slider ranges
+        InitializeSliders();
+        UpdateStatsUI(0);
+    }
+
+    private void Update()
+    {
+        // Плавное изменение слайдера стамины
+        if (staminaSlider != null)
         {
-            notificationText.enabled = false;
+            staminaSlider.value = Mathf.Lerp(staminaSlider.value, targetStaminaValue, Time.deltaTime * staminaSliderSpeed);
         }
     }
 
-    // Метод для получения урона
-    public void TakeDamage(int damage)
+    private void InitializeSliders()
     {
-        currentHealth -= damage;
-        if (currentHealth < 0)
+        if (healthSlider != null)
         {
-            currentHealth = 0;
-            // Здесь можно добавить логику смерти персонажа
+            healthSlider.maxValue = player.Health.maxHealth;
+            healthSlider.value = player.Health.currentHealth;
         }
-        UpdateStatsUI();
-    }
-
-    // Метод для восстановления здоровья
-    public void Heal(int amount)
-    {
-        currentHealth += amount;
-        if (currentHealth > maxHealth)
+        if (manaSlider != null)
         {
-            currentHealth = maxHealth;
+            manaSlider.maxValue = player.Mana.maxMana;
+            manaSlider.value = player.Mana.currentMana;
         }
-        UpdateStatsUI();
-    }
-
-    // Метод для использования маны
-    public bool UseMana(int amount)
-    {
-        if (currentMana >= amount)
+        if (staminaSlider != null)
         {
-            currentMana -= amount;
-            UpdateStatsUI();
-            return true;
+            staminaSlider.maxValue = player.Stamina.maxStamina;
+            staminaSlider.value = player.Stamina.currentStamina;
+            targetStaminaValue = player.Stamina.currentStamina;
         }
-        return false;
     }
 
-    // Метод для восстановления маны
-    public void RegenerateMana(int amount)
+    public void IncreaseSleepiness(int amount)
     {
-        currentMana += amount;
-        if (currentMana > maxMana)
-        {
-            currentMana = maxMana;
-        }
-        UpdateStatsUI();
+        currentSleepiness = Mathf.Min(MaxSleepiness, currentSleepiness + amount);
+        UpdateStatsUI(0);
     }
 
-    // Метод для получения опыта
-    public void GainExperience(int amount)
+    public void DecreaseSleepiness(int amount)
     {
-        experience += amount;
-        UpdateStatsUI();
-        // Здесь можно добавить логику повышения уровня
+        currentSleepiness = Mathf.Max(0, currentSleepiness - amount);
+        UpdateStatsUI(0);
     }
 
-    // При прокачке навыка (повышении силы) также отображаем уведомление
     public void IncreaseStrength(int amount)
     {
-        strength += amount;
-        UpdateStatsUI();
-        StartCoroutine(ShowSkillUpgradeNotification("Сила повышена!"));
+        Strength += amount;
+        UpdateStatsUI(0);
+    }
+    
+    private void UpdateStatsUI(int _)
+    {
+        UpdateUI();
     }
 
-    void Update()
+    private void UpdateStatsUI(float _)
     {
-        
+        UpdateUI();
     }
 
-    // Метод для обновления текста статистики на канвасе
-    private void UpdateStatsUI()
+    private void UpdateUI()
     {
-        if (statsText != null)
+        // Update slider values
+        if (healthSlider != null)
         {
-            statsText.text = $"Уровень: {level}\n" +
-                             $"Здоровье: {currentHealth}/{maxHealth}\n" +
-                             $"Мана: {currentMana}/{maxMana}\n" +
-                             $"Сила: {strength}\n" +
-                             $"Ловкость: {agility}\n" +
-                             $"Интеллект: {intelligence}\n" +
-                             $"Опыт: {experience}";
+            healthSlider.value = player.Health.currentHealth;
         }
-    }
-
-    // Короутина для отображения уведомления при прокачке навыка
-    private System.Collections.IEnumerator ShowSkillUpgradeNotification(string message)
-    {
-        if (notificationText != null)
+        if (manaSlider != null)
         {
-            notificationText.text = message;
-            notificationText.enabled = true;
-            yield return new WaitForSeconds(2.0f);
-            notificationText.enabled = false;
+            manaSlider.value = player.Mana.currentMana;
+        }
+        if (staminaSlider != null)
+        {
+            targetStaminaValue = player.Stamina.currentStamina;
         }
     }
 }

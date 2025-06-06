@@ -10,15 +10,24 @@ public class InventorySystem : MonoBehaviour
     [SerializeField] private AudioSource audioSource;
 
     private GameInputs _input;
-    public bool invOpen = false;
+    private bool _invOpen = false;
+    public bool invOpen => _invOpen;
+
+    private void Awake()
+    {
+        _input = GetComponent<GameInputs>();
+        if (_input == null)
+        {
+            Debug.LogWarning("GameInputs не найден на объекте!");
+        }
+        _invOpen = false;
+    }
 
     private void Start()
     {
-        _input = GetComponent<GameInputs>();
         inventoryData.Initialize();
         PrepareUI();
         inventoryData.OnInventoryUpdated += UpdateInventoryUI;
-        invOpen = false;
         inventoryUI.Hide();
     }
 
@@ -170,8 +179,8 @@ public class InventorySystem : MonoBehaviour
 
     public void ToggleInventory()
     {
-        invOpen = !invOpen;
-        if (invOpen)
+        _invOpen = !_invOpen;
+        if (_invOpen)
         {
             inventoryUI.Show();
             _input.SetCursorState(false);

@@ -19,16 +19,24 @@ public class GameInputs : MonoBehaviour
     public bool cursorLocked = true;
     public bool cursorInputForLook = true;
 
-    private InventorySystem inventorySystem;
+    public InventorySystem inventorySystem;
 
     void Start()
     {
         inventorySystem = GetComponent<InventorySystem>();
+        if (inventorySystem != null)
+        {
+            invOpen = false;
+        }
+        else
+        {
+            Debug.LogWarning("InventorySystem не найден на объекте!");
+        }
     }
 
     public void OnMove(InputValue value)
     {
-        if (inventorySystem != null && !inventorySystem.invOpen)
+        if (CanProcessInput())
         {
             MoveInput(value.Get<Vector2>());
         }
@@ -36,7 +44,7 @@ public class GameInputs : MonoBehaviour
 
     public void OnLook(InputValue value)
     {
-        if (cursorInputForLook && inventorySystem != null && !inventorySystem.invOpen)
+        if (cursorInputForLook && CanProcessInput())
         {
             LookInput(value.Get<Vector2>());
         }
@@ -44,7 +52,7 @@ public class GameInputs : MonoBehaviour
 
     public void OnJump(InputValue value)
     {
-        if (inventorySystem != null && !inventorySystem.invOpen)
+        if (CanProcessInput())
         {
             JumpInput(value.isPressed);
         }
@@ -52,7 +60,7 @@ public class GameInputs : MonoBehaviour
 
     public void OnSprint(InputValue value)
     {
-        if (inventorySystem != null && !inventorySystem.invOpen)
+        if (CanProcessInput())
         {
             SprintInput(value.isPressed);
         }
@@ -60,7 +68,7 @@ public class GameInputs : MonoBehaviour
 
     public void OnAttack(InputValue value)
     {
-        if (inventorySystem != null && !inventorySystem.invOpen)
+        if (CanProcessInput())
         {
             AttackInput(value.isPressed);
         }
@@ -68,14 +76,18 @@ public class GameInputs : MonoBehaviour
 
     public void OnInventory(InputValue value)
     {
-        if (inventorySystem != null && value.isPressed)
+        if (value.isPressed)
         {
-            inventorySystem.ToggleInventory();
+            if (inventorySystem != null)
+            {
+                inventorySystem.ToggleInventory();
+                invOpen = inventorySystem.invOpen;
+            }
         }
     }
-    public void OnPickup(InputValue value) // Новый метод для подбора
+    public void OnPickup(InputValue value)
     {
-        if (inventorySystem != null && !inventorySystem.invOpen)
+        if (CanProcessInput())
         {
             PickupInput(value.isPressed);
         }
@@ -108,6 +120,11 @@ public class GameInputs : MonoBehaviour
     public void PickupInput(bool newPickupState)
     {
         pickup = newPickupState;
+    }
+
+    private bool CanProcessInput()
+    {
+        return inventorySystem == null || !inventorySystem.invOpen;
     }
 
     private void OnApplicationFocus(bool hasFocus)
