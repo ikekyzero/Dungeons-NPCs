@@ -1,13 +1,11 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "Dialogue", menuName = "Dialogue/DialogueStandart")]
+[CreateAssetMenu(fileName = "Dialogue", menuName = "Dialogue/DialogueStandard")]
 public class Dialogue : ScriptableObject
 {
     public int DialogueId;
-    public int CharacterID;
-    public int CharacterExpression;
+    public string CharacterName;
     public string Line;
     public int NextDialogueId;
+    public bool IsEndOfDialogue; // Поле для указания завершения диалога
 }

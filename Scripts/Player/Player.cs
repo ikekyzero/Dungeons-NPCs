@@ -39,7 +39,6 @@ public class Player : MonoBehaviour
     {
         InitializeSystems();
         nextRegenerationTime = 0;
-        Debug.Log("Player Awake: Starting stamina regeneration coroutine");
         StartCoroutine(StaminaRegeneration());
 
         // Инициализация эффектов
@@ -137,7 +136,6 @@ public class Player : MonoBehaviour
         OnRespawn?.Invoke();
         nextRegenerationTime = Time.time; // Немедленная регенерация после возрождения
         UpdateBloodVignette(); // Обновляем виньетку при возрождении
-        Debug.Log("Player respawned: Stamina reset and regeneration enabled");
     }
 
     private System.Collections.IEnumerator StaminaRegeneration()

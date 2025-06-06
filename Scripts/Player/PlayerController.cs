@@ -16,9 +16,10 @@ public class PlayerController : MonoBehaviour
     public float jumpHeight = 1.2f;
     public float jumpTimeout = 0.50f;
     public float fallTimeout = 0.15f;
-    public float jumpStaminaCost = 10f; 
+    public float jumpStaminaCost = 10f; // Стоимость стамины за прыжок
+
     [Header("Атака игрока")]
-    public float AtackStaminaCost = 15f; 
+    public float attackStaminaCost = 15f; // Стоимость стамины за атаку
 
     [Header("Проверка земли")]
     public bool isGrounded = true;
@@ -131,7 +132,8 @@ public class PlayerController : MonoBehaviour
 
     private void HandleMovement()
     {
-        float targetSpeed = gameInputs.sprint ? sprintSpeed : moveSpeed;
+        bool isAttacking = hasAnimator && animator.GetCurrentAnimatorStateInfo(0).IsName("Attack");
+        float targetSpeed = (gameInputs.sprint && !isAttacking) ? sprintSpeed : moveSpeed;
         if (gameInputs.move == Vector2.zero) targetSpeed = 0.0f;
 
         float currentHorizontalSpeed = new Vector3(controller.velocity.x, 0.0f, controller.velocity.z).magnitude;
@@ -139,7 +141,7 @@ public class PlayerController : MonoBehaviour
         float inputMagnitude = gameInputs.analogMovement ? gameInputs.move.magnitude : 1f;
 
         // Потребление стамины при беге
-        if (gameInputs.sprint && gameInputs.move != Vector2.zero)
+        if (gameInputs.sprint && gameInputs.move != Vector2.zero && !isAttacking)
         {
             float staminaCost = sprintStaminaCost * Time.deltaTime; // Уменьшаем стамину пропорционально времени
             if (player.Stamina.Use(staminaCost))
@@ -186,6 +188,7 @@ public class PlayerController : MonoBehaviour
 
     private void HandleJumpAndGravity()
     {
+        bool isAttacking = hasAnimator && animator.GetCurrentAnimatorStateInfo(0).IsName("Attack");
         if (isGrounded)
         {
             fallTimeoutDelta = fallTimeout;
@@ -198,10 +201,14 @@ public class PlayerController : MonoBehaviour
             {
                 verticalVelocity = -2f;
             }
-            if (gameInputs.jump && jumpTimeoutDelta <= 0.0f && player.Stamina.Use(jumpStaminaCost)) // Прыжок тратит выносливость
+            if (gameInputs.jump && jumpTimeoutDelta <= 0.0f && !isAttacking)
             {
-                verticalVelocity = Mathf.Sqrt(jumpHeight * -2f * Physics.gravity.y);
-                if (hasAnimator) animator.SetBool(animIDJump, true);
+                float staminaCost = jumpStaminaCost * 100f * Time.deltaTime;
+                if (player.Stamina.Use(staminaCost))
+                {
+                    verticalVelocity = Mathf.Sqrt(jumpHeight * -2f * Physics.gravity.y);
+                    if (hasAnimator) animator.SetBool(animIDJump, true);
+                }
             }
             if (jumpTimeoutDelta >= 0.0f)
             {
@@ -270,7 +277,14 @@ public class PlayerController : MonoBehaviour
 
     private void PerformAttack()
     {
-        if (hasAnimator && player.Stamina.Use(AtackStaminaCost)) animator.SetTrigger(animIDAttack);
+        if (hasAnimator)
+        {
+            float staminaCost = attackStaminaCost * 100f * Time.deltaTime;
+            if (player.Stamina.Use(staminaCost))
+            {
+                animator.SetTrigger(animIDAttack);
+            }
+        }
     }
 
     public void TakeDamage(int damage)

@@ -1,5 +1,5 @@
 using UnityEngine;
-using UnityEngine.UI; // Required for Slider component
+using UnityEngine.UI;
 
 public class PlayerStats : MonoBehaviour
 {
@@ -7,17 +7,18 @@ public class PlayerStats : MonoBehaviour
     public int Strength = 10;
     public int Agility = 10;
     public int Intelligence = 10;
+    public int Charisma = 10; // Добавляем харизму
     public int Armor = 0;
     public int MaxSleepiness = 100;
     private int currentSleepiness;
 
     [Header("Нужные объекты")]
-    public Slider healthSlider; // Slider for health
-    public Slider manaSlider; // Slider for mana
-    public Slider staminaSlider; // Slider for stamina
-    
+    public Slider healthSlider;
+    public Slider manaSlider;
+    public Slider staminaSlider;
+
     [Header("Настройки анимации")]
-    [SerializeField] private float staminaSliderSpeed = 5f; // Скорость изменения слайдера стамины
+    [SerializeField] private float staminaSliderSpeed = 5f;
 
     private Player player;
     private float targetStaminaValue;
@@ -27,20 +28,17 @@ public class PlayerStats : MonoBehaviour
         player = GetComponent<Player>();
         currentSleepiness = 0;
 
-        // Подписка на события игрока
         player.OnHealthChanged += UpdateStatsUI;
         player.OnManaChanged += UpdateStatsUI;
         player.OnStaminaChanged += UpdateStatsUI;
         player.OnLevelUp += UpdateStatsUI;
 
-        // Initialize slider ranges
         InitializeSliders();
         UpdateStatsUI(0);
     }
 
     private void Update()
     {
-        // Плавное изменение слайдера стамины
         if (staminaSlider != null)
         {
             staminaSlider.value = Mathf.Lerp(staminaSlider.value, targetStaminaValue, Time.deltaTime * staminaSliderSpeed);
@@ -84,7 +82,13 @@ public class PlayerStats : MonoBehaviour
         Strength += amount;
         UpdateStatsUI(0);
     }
-    
+
+    public void IncreaseCharisma(int amount) // Новый метод для харизмы
+    {
+        Charisma += amount;
+        UpdateStatsUI(0);
+    }
+
     private void UpdateStatsUI(int _)
     {
         UpdateUI();
@@ -97,7 +101,6 @@ public class PlayerStats : MonoBehaviour
 
     private void UpdateUI()
     {
-        // Update slider values
         if (healthSlider != null)
         {
             healthSlider.value = player.Health.currentHealth;
