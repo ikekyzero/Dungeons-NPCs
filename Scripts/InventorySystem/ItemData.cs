@@ -74,17 +74,13 @@ public class ItemEffect
             var player = target.GetComponent<Player>();
             if (player != null)
             {
+                Debug.Log("Player found, healing by " + value);
                 player.Heal((int)value);
                 return true;
             }
-        }
-        else if (effectType == "Strength")
-        {   
-            var stats = target.GetComponent<PlayerStats>();
-            if (stats != null)
+            else
             {
-                stats.IncreaseStrength((int)value);
-                return true;
+                Debug.LogWarning("Player component not found on target!");
             }
         }
         return false;

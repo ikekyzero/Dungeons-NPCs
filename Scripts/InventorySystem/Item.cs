@@ -5,7 +5,7 @@ using UnityEngine;
 public class Item : MonoBehaviour
 {
     [field: SerializeField]
-    public ItemData InventoryItem { get; private set; }
+    public ItemData InventoryItem { get; set; }
 
     [field: SerializeField]
     public int Quantity { get; set; } = 1;

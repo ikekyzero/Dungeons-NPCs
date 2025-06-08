@@ -55,7 +55,7 @@ public class PlayerController : MonoBehaviour
     private int animIDJump;
     private int animIDFreeFall;
     private int animIDMotionSpeed;
-    private int animIDAttack;
+    public int animIDAttack;
     private int animIDDamage;
 
     private PlayerInput playerInput;
@@ -64,6 +64,7 @@ public class PlayerController : MonoBehaviour
     private GameInputs gameInputs;
     private GameObject mainCamera;
     private Player player;
+    private CombatSystem combatSystem;
 
     private const float threshold = 0.01f;
     private bool hasAnimator;
@@ -72,6 +73,7 @@ public class PlayerController : MonoBehaviour
     {
         mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
         player = GetComponent<Player>();
+        combatSystem = GetComponent<CombatSystem>();
     }
 
     private void Start()
@@ -268,21 +270,12 @@ public class PlayerController : MonoBehaviour
 
     private void ProcessAttackInput()
     {
-        if (isGrounded && gameInputs.attack) // Атака тратит выносливость
+        if (isGrounded)
         {
-            gameInputs.attack = false;
-            PerformAttack();
-        }
-    }
-
-    private void PerformAttack()
-    {
-        if (hasAnimator)
-        {
-            float staminaCost = attackStaminaCost * 100f * Time.deltaTime;
-            if (player.Stamina.Use(staminaCost))
+            if (gameInputs.attack)
             {
-                animator.SetTrigger(animIDAttack);
+                gameInputs.attack = false;
+                combatSystem.PerformAttack();
             }
         }
     }
@@ -290,6 +283,6 @@ public class PlayerController : MonoBehaviour
     public void TakeDamage(int damage)
     {
         player.TakeDamage(damage);
-        if (hasAnimator) animator.SetTrigger(animIDDamage);
+        animator.SetTrigger(animIDDamage);
     }
 }

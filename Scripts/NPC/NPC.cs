@@ -5,6 +5,7 @@ public class NPC : MonoBehaviour
 {
     [SerializeField] private int startDialogueId;
     [SerializeField] private ScriptableObject[] dialogueNodes;
+    [SerializeField] private Transform dialogueCameraAnchor;
     private Dictionary<int, ScriptableObject> dialogueDictionary;
     private PlayerStats playerStats;
     private InventorySystem inventorySystem;
@@ -31,6 +32,9 @@ public class NPC : MonoBehaviour
 
     public void Interact()
     {
+        CameraManager cameraManager = FindObjectOfType<CameraManager>();
+        cameraManager.SwitchToDialogueCamera(dialogueCameraAnchor);
+
         DialogueSystem dialogueSystem = FindObjectOfType<DialogueSystem>();
         dialogueSystem.StartDialogue(startDialogueId, dialogueDictionary, playerStats, inventorySystem, questSystem);
     }

@@ -10,6 +10,7 @@ public class GameInputs : MonoBehaviour
     public bool sprint;
     public bool attack;
     public bool invOpen;
+    public bool dialogueOpen; // Added to track dialogue state
     public bool pickup;
 
     [Header("Movement Settings")]
@@ -124,7 +125,7 @@ public class GameInputs : MonoBehaviour
 
     private bool CanProcessInput()
     {
-        return inventorySystem == null || !inventorySystem.invOpen;
+        return !invOpen && !dialogueOpen; // Updated to check both invOpen and dialogueOpen
     }
 
     private void OnApplicationFocus(bool hasFocus)

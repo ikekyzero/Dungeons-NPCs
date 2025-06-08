@@ -16,6 +16,7 @@ public class PlayerStats : MonoBehaviour
     public Slider healthSlider;
     public Slider manaSlider;
     public Slider staminaSlider;
+    private GameInputs gameInputs;
 
     [Header("Настройки анимации")]
     [SerializeField] private float staminaSliderSpeed = 5f;
@@ -26,6 +27,7 @@ public class PlayerStats : MonoBehaviour
     private void Start()
     {
         player = GetComponent<Player>();
+        gameInputs = GetComponent<GameInputs>();
         currentSleepiness = 0;
 
         player.OnHealthChanged += UpdateStatsUI;
@@ -39,6 +41,11 @@ public class PlayerStats : MonoBehaviour
 
     private void Update()
     {
+        if (gameInputs != null)
+        {
+            bool shouldShowSliders = !gameInputs.dialogueOpen && !gameInputs.invOpen;
+            SetSlidersVisibility(shouldShowSliders);
+        }
         if (staminaSlider != null)
         {
             staminaSlider.value = Mathf.Lerp(staminaSlider.value, targetStaminaValue, Time.deltaTime * staminaSliderSpeed);
@@ -65,6 +72,13 @@ public class PlayerStats : MonoBehaviour
         }
     }
 
+    private void SetSlidersVisibility(bool visible)
+    {
+        if (healthSlider != null) healthSlider.gameObject.SetActive(visible);
+        if (manaSlider != null) manaSlider.gameObject.SetActive(visible);
+        if (staminaSlider != null) staminaSlider.gameObject.SetActive(visible);
+    }
+    
     public void IncreaseSleepiness(int amount)
     {
         currentSleepiness = Mathf.Min(MaxSleepiness, currentSleepiness + amount);

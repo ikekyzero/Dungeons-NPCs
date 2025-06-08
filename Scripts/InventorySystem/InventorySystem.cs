@@ -95,7 +95,7 @@ public class InventorySystem : MonoBehaviour
         InventoryItem item = inventoryData.GetItemAt(itemIndex);
         if (!item.IsEmpty)
         {
-            inventoryUI.CreateDraggedItem(item.Item.Image, item.Quantity); // Исправлено с item.Value.Quantity на item.Quantity
+            inventoryUI.CreateDraggedItem(item.Item.Image, item.Quantity);
         }
     }
 
@@ -113,6 +113,10 @@ public class InventorySystem : MonoBehaviour
             return;
         }
 
+        // Очищаем старые кнопки
+        inventoryUI.ClearActionPanel();
+
+        // Добавляем новые действия
         if (item.Item.Actions != null && item.Item.Actions.Count > 0)
         {
             foreach (var action in item.Item.Actions)
@@ -121,16 +125,14 @@ public class InventorySystem : MonoBehaviour
                 Debug.Log($"Added action {action.Name} for item {item.Item.Name} at index {itemIndex}");
             }
         }
-        else
-        {
-            Debug.LogWarning($"No actions available for item {item.Item.Name} at index {itemIndex}");
-        }
 
+        // Добавляем действие "Drop", если предмет можно выбросить
         if (item.Item.IsDroppable)
         {
             inventoryUI.AddAction("Drop", () => DropItem(itemIndex, item.Quantity));
         }
 
+        // Показываем панель с новыми кнопками
         inventoryUI.ShowItemAction(itemIndex);
     }
 
@@ -165,16 +167,37 @@ public class InventorySystem : MonoBehaviour
         {
             inventoryUI.ResetSelection();
         }
+
+        // Закрываем панель действий после выполнения действия
+        inventoryUI.HideItemActionPanel();
     }
 
     private void DropItem(int itemIndex, int quantity)
     {
+        InventoryItem item = inventoryData.GetItemAt(itemIndex);
+        if (item.IsEmpty) return;
+
+        // Создаём предмет в мире
+        if (item.Item.Prefab != null)
+        {
+            Vector3 dropPosition = transform.position + transform.forward * 1.5f; // Смещение вперёд от игрока
+            GameObject droppedItem = Instantiate(item.Item.Prefab, dropPosition, Quaternion.identity);
+            Item itemComponent = droppedItem.GetComponent<Item>();
+            if (itemComponent != null)
+            {
+                itemComponent.InventoryItem = item.Item;
+                itemComponent.Quantity = quantity;
+            }
+        }
+
         inventoryData.RemoveItem(itemIndex, quantity);
         inventoryUI.ResetSelection();
         if (audioSource != null && dropClip != null)
         {
             audioSource.PlayOneShot(dropClip);
         }
+        // Закрываем панель действий после удаления предмета
+        inventoryUI.HideItemActionPanel();
     }
 
     public void ToggleInventory()
@@ -184,11 +207,16 @@ public class InventorySystem : MonoBehaviour
         {
             inventoryUI.Show();
             _input.SetCursorState(false);
+            Time.timeScale = 0f; // Останавливаем время в игре
         }
         else
         {
             inventoryUI.Hide();
-            _input.SetCursorState(true);
+            if (!_input.dialogueOpen)
+            {
+                _input.SetCursorState(true);
+            }
+            Time.timeScale = 1f; // Восстанавливаем время в игре
         }
     }
 

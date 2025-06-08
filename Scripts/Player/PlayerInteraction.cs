@@ -28,21 +28,17 @@ public class PlayerInteraction : MonoBehaviour
 
     private void Update()
     {
-        if (gameInputs.invOpen) // Не обрабатываем, если инвентарь открыт
+        if (gameInputs.invOpen || gameInputs.dialogueOpen)
         {
             if (interactionText != null) interactionText.enabled = false;
             return;
         }
-
         HandleInteractionHighlight();
 
-        // Проверяем, было ли нажатие кнопки взаимодействия
         if (gameInputs.pickup && !wasPickupPressed)
         {
             HandleInteraction();
         }
-
-        // Обновляем состояние для следующего кадра
         wasPickupPressed = gameInputs.pickup;
     }
 

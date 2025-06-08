@@ -20,11 +20,11 @@ MonoBehaviour:
   image: {fileID: 21300000, guid: 0efab048ae1864b49ae0cb01e208a44c, type: 3}
   prefab: {fileID: 6714486133587026075, guid: 07df2e15de3cea74a9cb99fce50620c2, type: 3}
   actions:
-  - name: "\u041B\u0435\u0447\u0435\u043D\u0438\u0435"
+  - name: "\u041F\u0438\u0442\u044C"
     sfx: {fileID: 8300000, guid: bde9dda5e10a4264f825d22a735bcebf, type: 3}
     actionType: "\u041B\u0435\u0447\u0435\u043D\u0438\u0435"
     effects:
     - effectType: Health
-      value: 5
+      value: 40
   isConsumable: 1
-  isDroppable: 0
+  isDroppable: 1

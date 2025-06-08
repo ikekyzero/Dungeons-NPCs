@@ -34,9 +34,13 @@ public class Player : MonoBehaviour
     public event Action<int> OnLevelUp;
 
     private float nextRegenerationTime;
+    
+    private GameInputs gameInputs;
 
     private void Awake()
     {
+        gameInputs = GetComponent<GameInputs>();
+
         InitializeSystems();
         nextRegenerationTime = 0;
         StartCoroutine(StaminaRegeneration());
@@ -88,7 +92,11 @@ public class Player : MonoBehaviour
 
     private void UpdateBloodVignette()
     {
-        if (bloodVignette != null)
+        if (gameInputs != null && (gameInputs.dialogueOpen || gameInputs.invOpen))
+        {
+            bloodVignette.SetActive(false);
+        }
+        else
         {
             bloodVignette.SetActive(health.currentHealth <= lowHealthThreshold);
         }
@@ -142,15 +150,14 @@ public class Player : MonoBehaviour
     {
         while (true)
         {
-            if (Time.time >= nextRegenerationTime && 
-                stamina.currentStamina < stamina.maxStamina - staminaRegenThreshold)
+            if (Time.time >= nextRegenerationTime && stamina.currentStamina < stamina.maxStamina)
             {
                 float regenAmount = staminaRegenRate * 0.1f; // Регенерация каждые 0.1 секунды
                 stamina.Regenerate(regenAmount);
                 OnStaminaChanged?.Invoke(stamina.currentStamina);
 
                 // Если стамина достигла максимума, устанавливаем её точно в максимум
-                if (stamina.currentStamina >= stamina.maxStamina - staminaRegenThreshold)
+                if (stamina.currentStamina >= stamina.maxStamina)
                 {
                     stamina.currentStamina = stamina.maxStamina;
                     OnStaminaChanged?.Invoke(stamina.currentStamina);

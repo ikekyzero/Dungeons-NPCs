@@ -18,16 +18,14 @@ public class ItemActionPanel : MonoBehaviour
 
     public void Toggle(bool val)
     {
-        if (val == true)
-            RemoveOldButtons();
-        gameObject.SetActive(val);
+        gameObject.SetActive(val); // Только переключаем видимость
     }
 
-    public void RemoveOldButtons()
+    public void ClearButtons()
     {
-        foreach (Transform transformChildObjects in transform)
+        foreach (Transform child in transform)
         {
-            Destroy(transformChildObjects.gameObject);
+            Destroy(child.gameObject);
         }
     }
 }

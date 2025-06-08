@@ -84,8 +84,10 @@ public class UIInventoryPage : MonoBehaviour
         int index = listOfUIItems.IndexOf(inventoryItemUI);
         if (index == -1)
         {
+            Debug.LogWarning("Item index not found.");
             return;
         }
+        Debug.Log("Requesting actions for item at index " + index);
         OnItemActionRequested?.Invoke(index);
     }
 
@@ -149,17 +151,19 @@ public class UIInventoryPage : MonoBehaviour
 
     public void AddAction(string actionName, Action performAction)
     {
+        Debug.Log("Adding action: " + actionName);
         actionPanel.AddButon(actionName, performAction);
     }
 
     public void ShowItemAction(int itemIndex)
     {
-        actionPanel.Toggle(true);
         actionPanel.transform.position = listOfUIItems[itemIndex].transform.position;
+        actionPanel.Toggle(true);
     }
 
     private void DeselectAllItems()
     {
+        Debug.Log("DeselectAllItems");
         foreach (UIInventoryItem item in listOfUIItems)
         {
             item.Deselect();
@@ -169,8 +173,17 @@ public class UIInventoryPage : MonoBehaviour
 
     public void Hide()
     {
+        Debug.Log("Hide");
         actionPanel.Toggle(false);
         gameObject.SetActive(false);
         ResetDraggedItem();
+    }
+    public void ClearActionPanel()
+    {
+        actionPanel.ClearButtons();
+    }
+    public void HideItemActionPanel()
+    {
+        actionPanel.Toggle(false);
     }
 }

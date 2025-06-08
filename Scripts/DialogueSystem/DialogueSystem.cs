@@ -19,10 +19,13 @@ public class DialogueSystem : MonoBehaviour
     private InventorySystem inventorySystem;
     private QuestSystem questSystem;
     private bool isDialogueEnded = false;
+    private GameInputs gameInputs; // Added to manage input and cursor state
 
     public bool IsDialogueActive() => dialoguePanel.activeSelf;
     public bool IsDialogueEnded() => isDialogueEnded;
-
+    void Start(){
+        gameInputs = GetComponent<GameInputs>(); 
+    }
     public void StartDialogue(int startDialogueId, Dictionary<int, ScriptableObject> nodes, PlayerStats stats, InventorySystem invSystem, QuestSystem quests)
     {
         dialogueNodes = nodes;
@@ -34,6 +37,15 @@ public class DialogueSystem : MonoBehaviour
             questSystem = quests;
             dialoguePanel.SetActive(true);
             isDialogueEnded = false;
+            if (gameInputs != null)
+            {
+                gameInputs.dialogueOpen = true; 
+                gameInputs.SetCursorState(false); 
+            }
+            else
+            {
+                Debug.LogWarning("GameInputs не найден на игроке!");
+            }
             DisplayCurrentNode();
         }
         else
@@ -173,5 +185,10 @@ public class DialogueSystem : MonoBehaviour
             Destroy(child.gameObject);
         }
         isDialogueEnded = true;
+        gameInputs.dialogueOpen = false;
+        gameInputs.SetCursorState(true);
+
+        CameraManager cameraManager = FindObjectOfType<CameraManager>();
+        cameraManager.SwitchToPlayerCamera();
     }
 }
