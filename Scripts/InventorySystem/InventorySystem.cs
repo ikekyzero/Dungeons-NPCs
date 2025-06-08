@@ -129,7 +129,7 @@ public class InventorySystem : MonoBehaviour
         // Добавляем действие "Drop", если предмет можно выбросить
         if (item.Item.IsDroppable)
         {
-            inventoryUI.AddAction("Drop", () => DropItem(itemIndex, item.Quantity));
+            inventoryUI.AddAction("Выбросить", () => DropItem(itemIndex, item.Quantity));
         }
 
         // Показываем панель с новыми кнопками
