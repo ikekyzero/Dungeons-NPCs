@@ -1,0 +1,13 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\DialogueSystem",
+    "\\InventorySystem",
+    "\\NPC",
+    "\\Player",
+    "\\Quests",
+    "\\UI"
+  ],
+  "SelectedNode": "\\InventorySystem\\ItemData.cs",
+  "PreviewInSolutionExplorer": false
+}
